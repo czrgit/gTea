@@ -1,0 +1,89 @@
+<?php
+require_once('session.php');
+require_once('../inc/conni.php');
+$sql="select * from article where id='".$_GET['id']."'";
+$result=mysqli_query($conn,$sql);
+$rs=mysqli_fetch_array($result);
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无标题文档</title>
+<link href="css/table.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="kindeditor/themes/default/default.css" />
+<script charset="utf-8" src="kindeditor/kindeditor-all-min.js"></script>
+<script charset="utf-8" src="kindeditor/lang/zh_CN.js"></script>
+<script>
+var editor;
+KindEditor.ready(function (K){
+	var editor=K.create('textarea[name="content"]',{
+		allowFileManager:true
+		});
+K('#image3').click(function (){
+		editor.loadPlugin('image',function(){
+			editor.plugin.imageDialog({
+			showRemote:false,
+			imageUrl:K('#url3').val(),
+			clickFn:function (url,title,width,height,border,align){
+				K('#url3').val (url);
+				editor.hideDialog();
+				}
+				});	
+				});
+				});
+});
+
+</script>
+</head>
+
+<body>
+<form id="form1" name="form1" method="post" action="article_modify_pass.php?id=<?php echo $rs['id']?>">
+<table width="100%" border="1" cellpadding="0" cellspacing="0">
+<tr>
+<td colspan="2" class="tt">修改文章</td>
+</tr>
+<tr>
+<td width="12%" height="35"><span style="color:#F30">*</span>标题：</td>
+<td width="88%" ><input name="title" type="text" id="title" value="<?php echo $rs['title']?>" size="50" /></td>
+</tr>
+<tr>
+<td height="31">来源：</td>
+<td><input name="comefrom" type="text" id="comefrom" value="<?php echo $rs['comefrom']?>" /></td>
+</tr>
+<tr>
+<td height="29">发布日期：</td>
+<td><input name="pubdate" type="text" id="pubdate" value="<?php echo $rs['pubdate']?>" /></td>
+</tr>
+<tr>
+<td height="60">关键词：</td>
+<td><label for="keywords"></label>
+<textarea name="keywords" cols="60" rows="3" id="keywords"><?php echo $rs['keywords']?></textarea></td>
+</tr>
+<tr>
+<td height="60">描述：</td>
+<td><textarea name="description" cols="60" rows="3" id="url3"><?php echo $rs['description']?></textarea></td>
+</tr>
+<tr>
+<td height="243"><span style="color:#F30">*</span>内容：</td>
+<td><textarea name="content" id="content" style="width:800px; height:300px; visibility:hidden;">
+<?php echo htmlspecialchars($rs['content']);?> 
+</textarea></td>
+</tr>
+<tr>
+<td height="33">推荐位：</td>
+<td>
+<?php
+$posid_array=explode(",",$rs['posid']);
+?>
+<input name="posid[]" type="checkbox" id="posid" value="setindex" <?php if(in_array("setindex",$posid_array)){echo "checked='ehecked'";}?> />
+首页推荐&nbsp;&nbsp;<input name="posid[]" type="checkbox" id="posid" value="settop"<?php if(in_array("settop",$posid_array)){echo "checked='checked'";}?> />首页置顶
+</td>
+</tr>
+<tr>
+<td height="43" colspan="2"><input type="submit" name="Submit" value="提交" /></td>
+</tr>
+</table>
+</form>
+</body>
+</html>
